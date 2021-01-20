@@ -55,24 +55,37 @@ jobs:
            ln -s /mnt/openwrt/feeds ./feeds
            ln -s /mnt/openwrt/staging_dir ./staging_dir
           df -h
+      
+      - name: 下载主题代码
+        run: |
+          cd package/lean
+          rm -rf luci-theme-argon  
+          git clone -b 18.06 https://github.com/jerrykuku/luci-theme-argon.git
+          cd ../
+          cd ../
+          
       - name: Update feeds
         run: |
           ./scripts/feeds update -a
           ./scripts/feeds install -a
+          
       - name: Generate configuration file
         run: |
-          rm -rf ./tmp 
-          rm -rf .config
+          rm -f ./.config*
+          wget https://raw.githubusercontent.com/yiweiwei/OpenWrt-CI/master/.config
+          make defconfig
+      #    rm -rf ./tmp 
+      #    rm -rf .config
       #    rm -f ./.config*
       #    touch ./.config
 
-      - name: Start SSH via tmate
-        uses: P3TERX/ssh2actions@main
+      #- name: 通过tmate启动SSH
+      #  uses: P3TERX/ssh2actions@main
         # Send connection info to Telegram (optional)
         # You can find related documents here: https://core.telegram.org/bots
-        env:
-          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
-          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      #  env:
+      #    TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      #    TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
       
 
           #
